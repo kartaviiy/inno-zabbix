@@ -1,0 +1,16 @@
+[local]
+bastion ansible_host=192.168.56.3 ansible_connection=local
+node-1 ansible_host=192.168.56.85
+
+[zabbix_server]
+node-1
+
+[zabbix_database]
+node-1
+
+[zabbix_proxy]
+node-1
+
+[database:children]
+zabbix_database
+zabbix_proxy

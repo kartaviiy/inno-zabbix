@@ -1,0 +1,35 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: "Update etc/hosts"
+      lineinfile:
+        path: /etc/hosts
+        line: '{{ item }}'
+      with_items:
+        - '192.168.56.3  bastion'
+        - '192.168.56.85 node-1 zabbix-web zabbix-server zabbix.example.com zabbix-database zabbix-proxy'
+
+    - name: Install basic packages
+      apt:
+        name:
+          - ca-certificates
+          - curl
+          - python3
+          - python3-pip
+        state: present
+        update_cache: True
+
+    - name: "Installing Python module"
+      pip:
+        name: netaddr
+
+    - name: Set authorized key taken from file
+      authorized_key:
+        user: vagrant
+        state: present
+        key: "{{ lookup('file', 'id_rsa.pub') }}"
+
+    - name: Set timezone to Europe/Amsterdam
+      community.general.timezone:
+        name: Europe/Amsterdam
